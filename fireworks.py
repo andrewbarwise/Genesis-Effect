@@ -1,13 +1,17 @@
 import pyglet
 
 #-drawing-constants---------------------------------------------------------------
-WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FS = , ,
-TARGET_FPS =
+WIDTH, HEIGHT, WINDOW_FS = 800, 600, True
+TARGET_FPS = 30
 # more constants here
 
+if WINDOW_FS:
+    win = pyglet.window.Window(fullscreen=True)
+else:
+    win = pyglet.window.Window(WIDTH, HEIGHT)
 #-simulation-constants------------------------------------------------------------
-MAX_PARTICLES =
-DELTA_T =
+MAX_PARTICLES = 100000
+DELTA_T = 1/TARGET_FPS
 # more constants here
 
 #-helper/utility-functions--------------------------------------------------------
@@ -18,8 +22,8 @@ DELTA_T =
 #   particle lifespan as the dying age of the particle in frames
 #   (lifespan could be optional (=1) if age is a fraction 0.0->1.0)
 def colorInterp(initialColor, finalColor, age, particleLifespan):
-
-    return newR, newG, newB, (newA?)
+    newR, newG,newB, newA = 0, 0, 0, 0
+    return newR, newG, newB, newA
 
 #-class-definitions---------------------------------------------------------------
 class ParticleSystem:
@@ -27,7 +31,7 @@ class ParticleSystem:
         # define system properties
         # self.pos = [x, y, z]
         # self.col = [r, g, b, (a?)]
-        # self.particles = []
+        self.particles = []
         # self.canSpawn = False
         # self.spawnType = particles (vs. nested particle systems)?
         # self.spawnCondition?
@@ -56,18 +60,19 @@ class Particle:
 
 #-main-update-function------------------------------------------------------------
 # spawn initial particle system
+someArgs = 0
 particleSystem = ParticleSystem(someArgs)
 
 # main loop driving simulation (set on timer)
 frameNum = 0
 
-@window event
 def mainLoop(dt):
     # update particle system
     global particleSystem, frameNum
     particleSystem.update()
     # update particles
     particles = particleSystem.particles
+    reversedIndices = [] #TODO
     for ii in reversedIndices:
         particles[ii].update()
         if particles[ii].canDie: particles.pop(ii) # may be more efficient with numpy array
@@ -77,11 +82,12 @@ def mainLoop(dt):
     for pp in particles:
         points += pp.pos
         colors += pp.col
-    window.drawAllPoints(points, colors)
+        # window.drawAllPoints(points, colors) # TODO
     frameNum += 1
     # frame.saveFrame(frameNum)? for making smooth video later
-    print("Frame %3d: %6d particles, %4dms interval" % (frameNum, len(particles) dt) )
+    print("Frame %3d: %6d particles, %4d ms (%2d FPS)" % (frameNum, len(particles), dt, 1/dt) )
     return None
 
 #-run-simluation------------------------------------------------------------------
-setInterval(mainLoop, 1/TARGET_FPS)
+pyglet.clock.schedule_interval(mainLoop, 1/TARGET_FPS)
+pyglet.app.run()
