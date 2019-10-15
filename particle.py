@@ -25,6 +25,7 @@ class Particle:
         self.acc = acceleration
 
         self.col = color
+        self.age = 0
         self.alive = True
         # other properties
         return None

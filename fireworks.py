@@ -18,6 +18,9 @@ MAX_PARTICLES = 100000
 DELTA_T = 1/TARGET_FPS
 # more constants here
 
+def spawnParticle(t):
+    print(t)
+
 #-main-update-function------------------------------------------------------------
 # spawn initial particle system
 particleSystem = ParticleSystem([0.0, 0.0, 0.0], [1.0, 1.0, 1.0])
@@ -57,4 +60,5 @@ def mainLoop(dt):
 
 #-run-simluation------------------------------------------------------------------
 pyglet.clock.schedule_interval(mainLoop, 1/TARGET_FPS)
+pyglet.clock.schedule_interval(spawnParticle, 1.0)
 pyglet.app.run()
