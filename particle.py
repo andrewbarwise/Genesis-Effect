@@ -17,27 +17,60 @@ class ParticleSystem:
         # spawn new particles etc.
         return None
 
+
+# gravity, act as our constant g, you can experiment by changing it
+GRAVITY = 0.05
+# list of color, can choose randomly or use as a queue (FIFO)
+colors = ['red', 'blue', 'yellow', 'white', 'green', 'orange', 'purple']
+
 class Particle:
-    def __init__(self, position, velocity, acceleration, color):
+    def __init__(self, cv, idx, total, explosion_speed, xx=0., yy=0., vx = 0., vy = 0., size=2., color = 'red', lifespan = 2, **kwargs):
         # define particle properties
-        self.pos = position
-        self.vel = velocity
-        self.acc = acceleration
-
-        self.col = color
+        self.id = idx
+        self.x = xx
+        self.y = yy
+        self.initial_speed = explosion_speed
+        self.vx = vx
+        self.vy = vy
+        self.total = total
         self.age = 0
-        self.alive = True
-        # other properties
-        return None
+        self.color = color
+        self.cv = cv
+        self.cid = self.cv.create_oval(
+            xx - size, yy - size, xx + size,
+            yy + size, fill=self.color)
+        self.lifespan = lifespan
 
-    def update(self):
-        # physics calculations
-        # visual changes (color etc.)
-        # check for events (dying, spawning new particles etc.)
 
-        # kill particle if off screen
-        if self.pos[1] < 0: self.alive = False
-        return None
+    def update(self, dt):
+        self.age += dt
+
+        # particle expansions
+        if self.alive() and self.expand():
+            move_x = cos(radians(self.id*360/self.total))*self.initial_speed
+            move_y = sin(radians(self.id*360/self.total))*self.initial_speed
+            self.cv.move(self.cid, move_x, move_y)
+            self.vx = move_x/(float(dt)*1000)
+
+        # falling down in projectile motion
+        elif self.alive():
+            move_x = cos(radians(self.id*360/self.total))
+            # we technically don't need to update x, y because move will do the job
+            self.cv.move(self.cid, self.vx + move_x, self.vy+GRAVITY*dt)
+            self.vy += GRAVITY*dt
+
+        # remove article if it is over the lifespan
+        elif self.cid is not None:
+            cv.delete(self.cid)
+            self.cid = None
+
+    # define time frame for expansion
+    def expand (self):
+        return self.age <= 1.2
+
+    # check if particle is still alive in lifespan
+    def alive(self):
+        return self.age <= self.lifespan
 
 #-helper/utility-functions--------------------------------------------------------
 # COLOR INTERPOLATION
