@@ -5,8 +5,9 @@ GRAVITY = -50
 EXPL_VEL_M, EXPL_VEL_V = 25, 25
 EXPL_SHAPE = 0.5
 PART_VEL = 30
-PART_VAR = 5
+PART_VAR = 3
 EXPL_R_MIN, EXPL_R_MAX = 0, math.pi*2
+RADIUS = 25
 
 #-class-definitions---------------------------------------------------------------
 class ParticleSystem:
@@ -80,7 +81,7 @@ class Particle:
         self.col = colorInterp(self.colS, self.colF, self.age, self.lifespan)
         # kill if too old
         self.alive = self.age < self.lifespan
-        # self.alive = math.sqrt(self.pos[0]**2+self.pos[1]**2+self.pos[2]**2) > r
+        self.alive = math.sqrt(self.pos[0]**2+self.pos[1]**2+self.pos[2]**2) > RADIUS
 
 #-helper/utility-functions--------------------------------------------------------
 # COLOR INTERPOLATION
