@@ -5,8 +5,8 @@ class ParticleSystem:
         self.pos = [position[0], position[1], position[2]]
         self.col = [color[0], color[1], color[2]]
         self.children = []
-        self.isParentSystem = parentSystem
         self.canSpawn = False
+        self.alive = True
         # self.spawnType = particles (vs. nested particle systems)?
         # self.spawnCondition?
         return None

@@ -23,33 +23,37 @@ def spawnParticle(t):
 
 #-main-update-function------------------------------------------------------------
 # spawn initial particle system
-particleSystem = ParticleSystem([0.0, 0.0, 0.0], [1.0, 1.0, 1.0])
+systems = [ParticleSystem([0.0, 0.0, 0.0], [1.0, 1.0, 1.0])]
 
 # main loop driving simulation (set on timer)
 frameNum = 0
 
 def mainLoop(dt):
-    global particleSystem, frameNum
+    global systems, frameNum
     # update particle system
-    particleSystem.update()
     particles = []
-    if particleSystem.isParentSystem:
-        for sys in particleSystem.children:
-            sys.update()
-            particles += sys.children
-    else:
-        particles = particleSystem.children
+    for sys in systems:
+        sys.update()
+        particles += sys.children
 
     # update particles
-    reversedIndices = reversed(list(range(len(particles))))
-    for ii in reversedIndices:
-        particles[ii].update()
-        if not particles[ii].alive: del particles[ii] # may be more efficient with numpy array
+    for sys, index in reversed(list(enumerate(systems))):
+        sys.update()
+        if sys.alive:
+            particles += sys.children
+        else:
+            del systems[index]
+
+
+    # update particles
+    for particle, index in reversed(list(enumerate(particles))):
+        particle.update()
+        if not particle.alive: del particles[index] # may be more efficient with numpy array
 
     # draw pixels -> may be able to remove one loop with reordering and optimisation
     glBegin(GL_POINTS)
     for pp in particles:
-        glColor4f(pp.col[0], pp.col[1], pp.col[2], 1.0)
+        glColor4f(pp.col[0], pp.col[1], pp.col[2], 0.9)
         glVertex3f(pp.pos[0], pp.pos[1], pp.pos[2])
     glEnd()
 
