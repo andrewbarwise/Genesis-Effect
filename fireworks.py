@@ -59,8 +59,8 @@ def mainLoop(dt):
 
 #-run-simluation------------------------------------------------------------------
 def spawnParticle(t):
-    xpos = random.randint(WIDTH/2, WIDTH/2)
-    systems.append( ParticleSystem([xpos, HEIGHT/2, 0], [1.0, 0.05, 0.05, 0.9], [0.0, 1.0, 0.0, 0.1]) )
+    xpos = random.uniform(0, WIDTH/2)
+    systems.append( ParticleSystem([xpos, HEIGHT/2, 0], [1.0, 0.0, 0.0, 0.8], [0.0, 1.0, 0.0, 0.1]) )
 
 pyglet.clock.schedule_interval(mainLoop, 1/TARGET_FPS)
 pyglet.clock.schedule_interval(spawnParticle, 0.1)
