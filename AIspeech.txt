@@ -1,0 +1,32 @@
+﻿Intro
+Welcome to our presentation on Particle Systems. The inspiration for todays topic comes from the paper Particle Systems: A Technique for Modelling a Class of Fuzzy Objects by William T Reeves.
+
+In this paper Reeves set out a methodology for modelling objects such as fire, water, smoke and clouds as collections of particles. Famously this technique was used in the movie Star Trek II: The Wrath of Khan. The  genesis sequence shows a bomb exploding into a barren planet sparking flames which engulf the planet in turn reinvigrating the planet.
+
+Basic model of particle systems
+A particle system is a collection of many minute particles that collectively represent a fuzzy object. A system is developed in which particles are generated, move and change within the system, eventually being removed from the system. A set of parameters are used to allow the model designer to control the shape, apperance and dynamics of the particles within the system.
+
+1) Particle generation: The number of particles generated is important because it strongly influences the density of the fuzzy object. One method of generating new particles is to control the mean number of new particles generated per frame and its variance with the equation NewParts(f) = MeanParts(f) + Rand() * VarParts(f), where Rand() is a random number between -1 and 1.
+
+A simple linear function is used to allow the particle system to grow or shrink in intensity as the program moves frame by frame. The linear function is defined as 
+MeanParts(f) = InitialMeanParts + DeltaMeanParts * (f – f(0)), where f is the current frame during which the particle system is alive, InitialMeanParts is the mean number of particles at f(0) and DeltaMeanParts represents its rate of change.
+
+2) Particle attributes: Each particle generated is defined by the following attributes:
+- initial position
+- initial velocity
+- initial size
+- initial colour
+- initial transparency
+- shape
+- lifetime
+
+Any number of possible attributes could be used within a particle system however we must be concious of time and computational constraints.
+
+3) Particle dynamics: Individual particles must change over time in colour, transparency and size. It is essential that particles move from one frame to the next. To enable particles to move frame by frame a velocity vector is added to its position vector. Acceleration values are used to simulate gravity and allow particles to move in non linear lines.
+
+4) Particle extinction: There are a few methods for determining the lifetime of a particle. One way is to have a limit on its lifetime measured by frames. Once a particles lifetime reaches zero it is terminated. Another way of ensuring particle extinction is to track the distance of a particle and killing it off if it moves beyond a specified distance from the origin of its parent particle system
+
+5) Particle rendering:
+
+6) Particle hierarchy:
+ 
