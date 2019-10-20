@@ -1,74 +1,79 @@
+import random, math
+
+#-constants-----------------------------------------------------------------------
+GRAVITY = -100
+EXPL_VEL_M, EXPL_VEL_V = 50, 50
+EXPL_SHAPE = 0.8
+EXPL_SHAPE_V = 50
+EXPL_R_MIN, EXPL_R_MAX = 0.3, math.pi-0.3
+
+TWO_PI = math.pi * 2
+
 #-class-definitions---------------------------------------------------------------
 class ParticleSystem:
-    def __init__(self, position, color, parentSystem=False):
+    def __init__(self, position, startColor, endColor, lifespan=3):
         # define system properties
-        self.pos = [position[0], position[1], position[2]]
-        self.col = [color[0], color[1], color[2]]
+        self.pos = position
+
+        self.col = startColor
+        self.colS, self.colF = startColor, endColor
+
         self.children = []
-        self.isParentSystem = parentSystem
+        self.canSpawn = True
+
+        self.age = 0
+        self.lifespan = lifespan
+        self.alive = True
+
+    def update(self, dt):
+        # print(self.age, self.lifespan, self.pos, self.col, self.canSpawn, len(self.children))
+        self.age += dt
+        # update children
+        for index, child in reversed(list(enumerate(self.children))):
+            child.update(dt)
+            if not child.alive:
+                del self.children[index]
+        # spawn children
+        if self.canSpawn: self.spawn()
+        # update color
+        self.col = colorInterp(self.colS, self.colF, self.age, self.lifespan)
+        # kill if too old
+        self.alive = self.age < self.lifespan
+
+    def spawn(self):
+        for ii in range(200):
+            pow, rad = EXPL_VEL_M+random.uniform(-EXPL_VEL_V, EXPL_VEL_V), random.uniform(EXPL_R_MIN, EXPL_R_MAX)
+            self.children.append( Particle(self.pos.copy(),[(pow*2*(1-EXPL_SHAPE))*math.cos(rad), (pow*2*EXPL_SHAPE)*math.sin(rad), 0], [0, GRAVITY, 0], self.col.copy(), self.colF) )
         self.canSpawn = False
-        # self.spawnType = particles (vs. nested particle systems)?
-        # self.spawnCondition?
-        return None
-
-    def update(self):
-        # move?
-        # check life/spawning conditions
-        # spawn new particles etc.
-        return None
-
-
-# gravity, act as our constant g, you can experiment by changing it
-GRAVITY = 0.05
-# list of color, can choose randomly or use as a queue (FIFO)
-colors = ['red', 'blue', 'yellow', 'white', 'green', 'orange', 'purple']
 
 class Particle:
-    def __init__(self, total, explosion_speed, xx=0., yy=0., vx = 0., vy = 0., size=2., color = 'red', lifespan = 2, **kwargs):
-        # define particle properties    
-        self.x = xx
-        self.y = yy
-        self.initial_speed = explosion_speed
-        self.vx = vx
-        self.vy = vy
-        self.total = total
-        self.age = 0
-        self.color = color
-        self.cid = self.cv.create_oval(
-            xx - size, yy - size, xx + size,
-            yy + size, fill=self.color)
-        self.lifespan = lifespan
+    def __init__(self, position, velocity, acceleration, startColor, endColor, lifespan = 1.5):
+        # define particle properties
+        self.pos = position
+        self.vel = velocity
+        self.acc = acceleration
 
+        self.col = startColor
+        self.colS, self.colF = startColor, endColor
+
+        self.age = 0
+        self.lifespan = lifespan
+        self.alive = True
 
     def update(self, dt):
         self.age += dt
-
-        # particle expansions
-        if self.alive() and self.expand():
-            move_x = cos(radians(self.id*360/self.total))*self.initial_speed
-            move_y = sin(radians(self.id*360/self.total))*self.initial_speed
-            self.cv.move(self.cid, move_x, move_y)
-            self.vx = move_x/(float(dt)*1000)
-
-        # falling down in projectile motion
-        elif self.alive():
-            move_x = cos(radians(self.id*360/self.total))
-            # we technically don't need to update x, y because move will do the job
-            self.cv.move(self.cid, self.vx + move_x, self.vy+GRAVITY*dt)
-            self.vy += GRAVITY*dt
-
-        # remove article if it is over the lifespan
-        elif self.cid is not None:
-            cv.delete(self.cid)
-            self.cid = None
-
-    # define time frame for expansion
-    def expand (self):
-        return self.age <= 1.2
-
-    # check if particle is still alive in lifespan
-    def alive(self):
-        return self.age <= self.lifespan
+        # update velocities
+        self.vel[0] += self.acc[0] * dt
+        self.vel[1] += self.acc[1] * dt
+        self.vel[2] += self.acc[2] * dt
+        # update velocities
+        self.pos[0] += self.vel[0] * dt
+        self.pos[1] += self.vel[1] * dt
+        self.pos[2] += self.vel[2] * dt
+        # update color
+        self.col = colorInterp(self.colS, self.colF, self.age, self.lifespan)
+        # kill if too old
+        self.alive = self.age < self.lifespan
 
 #-helper/utility-functions--------------------------------------------------------
 # COLOR INTERPOLATION
@@ -78,7 +83,8 @@ class Particle:
 #   (lifespan could be optional (=1) if age is a fraction 0.0->1.0)
 def colorInterp(initial, final, age, particleLifespan = 1):
     frac = age/particleLifespan
-    newR = intial[0] + frac*(final[0]-initial[0])
-    newG = intial[1] + frac*(final[1]-initial[1])
-    newB = intial[2] + frac*(final[2]-initial[2])
-    return [newR, newG, newB]
+    newR = initial[0] + frac*(final[0]-initial[0])
+    newG = initial[1] + frac*(final[1]-initial[1])
+    newB = initial[2] + frac*(final[2]-initial[2])
+    newA = initial[3] + frac*(final[3]-initial[3])
+    return [newR, newG, newB, newA]
