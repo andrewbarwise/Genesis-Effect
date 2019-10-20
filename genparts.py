@@ -1,7 +1,7 @@
 import random, math
 
 #-constants-----------------------------------------------------------------------
-GRAVITY = -50
+GRAVITY = -25
 EXPL_VEL_M, EXPL_VEL_V = 25, 25
 EXPL_SHAPE = 0.5
 EXPL_SHAPE_V = 25
@@ -39,10 +39,11 @@ class ParticleSystem:
         self.alive = self.age < self.lifespan
 
     def spawn(self):
-        for ii in range(500):
-            pow, ang1, ang2 = EXPL_VEL_M+random.uniform(-EXPL_VEL_V, EXPL_VEL_V), random.uniform(EXPL_R_MIN, EXPL_R_MAX), random.uniform(EXPL_R_MIN, EXPL_R_MAX)
-            self.children.append( Particle(self.pos.copy(),[pow*math.cos(ang1), pow*math.sin(ang1), pow*math.sin(ang2)], [0, GRAVITY, 0], self.col.copy(), self.colF) )
-        self.canSpawn = False
+        self.children.append( Particle(self.pos.copy(),[random.uniform(-5,5), 0, random.uniform(-5,5)], [0, GRAVITY, 0], self.col.copy(), self.colF) )
+        # for ii in range(500):
+        #     pow, ang1, ang2 = EXPL_VEL_M+random.uniform(-EXPL_VEL_V, EXPL_VEL_V), random.uniform(EXPL_R_MIN, EXPL_R_MAX), random.uniform(EXPL_R_MIN, EXPL_R_MAX)
+        #     self.children.append( Particle(self.pos.copy(),[pow*math.cos(ang1), pow*math.sin(ang1), pow*math.sin(ang2)], [0, GRAVITY, 0], self.col.copy(), self.colF) )
+        # self.canSpawn = False
 
 class Particle:
     def __init__(self, position, velocity, acceleration, startColor, endColor, lifespan = 1.5):

@@ -99,7 +99,7 @@ def mainLoop(dt):
     # for i in range(0, len(points), 3):
     #     glVertex3f(points[i], points[i+1], points[i+2])
     # glEnd()
-    rot_deg += 0.0
+    rot_deg += 0.1
 
     # particles
     global systems, frameNum
@@ -128,8 +128,11 @@ def mainLoop(dt):
 
 #-run-simluation------------------------------------------------------------------
 def spawnParticle(t):
-    xpos = random.uniform(0, WIDTH/2)
-    systems.append( ParticleSystem([0, 0, 0], [1.0, 0.0, 0.0, 1.0], [0.0, 1.0, 0.0, 1.1]) )
+    global r
+    # spherical coordinates
+    ang1, ang2 = random.random()*math.pi*2, random.random()*math.pi*2
+    x, y, z = r*math.sin(ang1)*math.cos(ang2), r*math.sin(ang1)*math.sin(ang2), r*math.cos(ang1)
+    systems.append( ParticleSystem([x, y, z], [1.0, 0.0, 0.0, 1.0], [0.0, 1.0, 0.0, 1.1]) )
 
 pyglet.clock.schedule_interval(mainLoop, 1/TARGET_FPS)
 pyglet.clock.schedule_interval(spawnParticle, 0.5)
