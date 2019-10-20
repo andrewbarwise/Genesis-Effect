@@ -1,36 +1,17 @@
 import random, math
 
 #-constants-----------------------------------------------------------------------
-GRAVITY = -100
-EXPL_VEL_M, EXPL_VEL_V = 50, 50
-EXPL_SHAPE = 0.8
-EXPL_SHAPE_V = 50
-EXPL_R_MIN, EXPL_R_MAX = 0.3, math.pi-0.3
-
-TWO_PI = math.pi * 2
+GRAVITY = -25
+EXPL_VEL_M, EXPL_VEL_V = 25, 25
+EXPL_SHAPE = 0.5
+EXPL_SHAPE_V = 25
+EXPL_R_MIN, EXPL_R_MAX = 0, math.pi*2
 
 #-class-definitions---------------------------------------------------------------
 class ParticleSystem:
     def __init__(self, position, startColor, endColor, lifespan=3):
         # define system properties
-<<<<<<< HEAD
-        self.pos = [position[0], position[1], position[2]]
-        self.col = [color[0], color[1], color[2]]
-        self.children = []
-        self.canSpawn = False
-        self.alive = True
-        # self.spawnType = particles (vs. nested particle systems)?
-        # self.spawnCondition?
-        return None
-
-    def update(self):
-        # move?
-        # check life/spawning conditions
-        # spawn new particles etc.
-        return None
-=======
         self.pos = position
->>>>>>> 23bfa873a37eaae51ddb04e1a182933db5b11c7f
 
         self.col = startColor
         self.colS, self.colF = startColor, endColor
@@ -58,10 +39,11 @@ class ParticleSystem:
         self.alive = self.age < self.lifespan
 
     def spawn(self):
-        for ii in range(200):
-            pow, rad = EXPL_VEL_M+random.uniform(-EXPL_VEL_V, EXPL_VEL_V), random.uniform(EXPL_R_MIN, EXPL_R_MAX)
-            self.children.append( Particle(self.pos.copy(),[(pow*2*(1-EXPL_SHAPE))*math.cos(rad), (pow*2*EXPL_SHAPE)*math.sin(rad), 0], [0, GRAVITY, 0], self.col.copy(), self.colF) )
-        self.canSpawn = False
+        self.children.append( Particle(self.pos.copy(),[random.uniform(-5,5), 0, random.uniform(-5,5)], [0, GRAVITY, 0], self.col.copy(), self.colF) )
+        # for ii in range(500):
+        #     pow, ang1, ang2 = EXPL_VEL_M+random.uniform(-EXPL_VEL_V, EXPL_VEL_V), random.uniform(EXPL_R_MIN, EXPL_R_MAX), random.uniform(EXPL_R_MIN, EXPL_R_MAX)
+        #     self.children.append( Particle(self.pos.copy(),[pow*math.cos(ang1), pow*math.sin(ang1), pow*math.sin(ang2)], [0, GRAVITY, 0], self.col.copy(), self.colF) )
+        # self.canSpawn = False
 
 class Particle:
     def __init__(self, position, velocity, acceleration, startColor, endColor, lifespan = 1.5):
