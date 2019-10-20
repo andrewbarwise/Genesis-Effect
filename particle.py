@@ -24,9 +24,8 @@ GRAVITY = 0.05
 colors = ['red', 'blue', 'yellow', 'white', 'green', 'orange', 'purple']
 
 class Particle:
-    def __init__(self, cv, idx, total, explosion_speed, xx=0., yy=0., vx = 0., vy = 0., size=2., color = 'red', lifespan = 2, **kwargs):
-        # define particle properties
-        self.id = idx
+    def __init__(self, total, explosion_speed, xx=0., yy=0., vx = 0., vy = 0., size=2., color = 'red', lifespan = 2, **kwargs):
+        # define particle properties    
         self.x = xx
         self.y = yy
         self.initial_speed = explosion_speed
@@ -35,7 +34,6 @@ class Particle:
         self.total = total
         self.age = 0
         self.color = color
-        self.cv = cv
         self.cid = self.cv.create_oval(
             xx - size, yy - size, xx + size,
             yy + size, fill=self.color)
