@@ -130,6 +130,7 @@ def mainLoop(dt):
 
 #-run-simluation------------------------------------------------------------------
 iteration = 0
+diameter = np.linspace(-r, r, 100)
 
 def spawnParticle(t):
     global r, iteration
