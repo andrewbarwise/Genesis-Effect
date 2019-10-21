@@ -27,9 +27,9 @@ DELTA_T = 1/TARGET_FPS
 # more constants here
 
 #-sphere-drawing------------------------------------------------------------------
-pos = [0, 0, -40]
-rot_deg = 0
-rot_vx, rot_vy, rot_vz = 0.0, 1.0, 0.0
+pos = [0, 0, -100]
+rot_deg = 60
+rot_vx, rot_vy, rot_vz = 0.0, 1.0, 0.1
 
 def midpoint3f(p1, p2):
     return [(p1[0]+p2[0])/2, (p1[1]+p2[1])/2, (p1[2]+p2[2])/2]
@@ -82,12 +82,13 @@ def mainLoop(dt):
 
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluPerspective(90, WIDTH/HEIGHT, 0.1, 25)
+    gluPerspective(90, WIDTH/HEIGHT, 0.1, 100)
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
     glTranslatef(*pos)
+    # glRotatef(rot_deg, rot_vx, rot_vy, rot_vz)
     glRotatef(rot_deg, rot_vx, rot_vy, rot_vz)
 
     # glBegin(GL_POINTS)
@@ -101,7 +102,7 @@ def mainLoop(dt):
     for i in range(0, len(points), 3):
         glVertex3f(points[i], points[i+1], points[i+2])
     glEnd()
-    rot_deg += 0
+    rot_deg -= 0
 
     # particles
     global systems, frameNum
@@ -124,25 +125,36 @@ def mainLoop(dt):
     glEnd()
 
     frameNum += 1
-    # frame.saveFrame(frameNum)? for making smooth video later
+    # pyglet.image.get_buffer_manager().get_color_buffer().save('angle/' + str(frameNum)+'.png')
     print( "Frame %3d: %6d particles, %3d systems, %4d ms (%2d FPS)" % (frameNum, len(particles), len(systems), dt, 1/dt) )
     glFlush()
 
 #-run-simluation------------------------------------------------------------------
 iteration = 0
 diameter = np.linspace(-r, r, 100)
+DENSITY = 0.9
+LIFE_MEAN, LIFE_VAR = 2, 1
 
 def spawnParticle(t):
     global r, iteration
-    # spherical coordinates
-    polar = (math.pi * (iteration/400) % math.pi) - math.pi/4
-    for ii in range(4):
-        azimuth = ii * (math.pi/4) - math.pi/2
-        systems.append( ParticleSystem([r, polar, azimuth], [1.0, 0.5, 0.05, 0.95], [1.0, 0.0, 0.1, 0.5]) )
+    if iteration < 100:
+        # spherical coordinates
+        x = diameter[iteration]
+        minRad = math.sqrt( r**2 - x**2 )
+        # print(iteration, x, minorRadius)
+        for ii in range(round(DENSITY*minRad)):
+            ang = random.uniform(0, 2*math.pi)
+            life = LIFE_MEAN + random.uniform(-LIFE_VAR, LIFE_VAR)
+            systems.append( ParticleSystem([x, minRad*math.sin(ang), minRad*math.cos(ang)], [1.0, 0.5, 0.05, 0.95], [1.0, 0.0, 0.1, 0.1], lifespan=life) )
 
-    # systems.append( ParticleSystem([r, -polar, azimuth], [1.0, 0.5, 0.05, 0.95], [1.0, 0.0, 0.1, 0.5]) )
-    iteration += 1
+        # systems.append( ParticleSystem([25, 0, 0], [1.0, 0.5, 0.05, 0.95], [1.0, 0.0, 0.1, 0.5]) )
+        # systems.append( ParticleSystem([0, 25, 0], [0.0, 1.0, 0.05, 0.95], [0.0, 1.0, 0.1, 0.5]) )
+        # systems.append( ParticleSystem([0, 0, 25], [0.0, 0.5, 1.00, 0.95], [0.0, 0.0, 1.0, 0.5]) )
+        # systems.append( ParticleSystem([-25, 0, 0], [1.0, 0.5, 0.05, 0.95], [1.0, 0.0, 0.1, 0.5]) )
+        # systems.append( ParticleSystem([0, -25, 0], [0.0, 1.0, 0.05, 0.95], [0.0, 1.0, 0.1, 0.5]) )
+        # systems.append( ParticleSystem([0, 0, -25], [0.0, 0.5, 1.00, 0.95], [0.0, 0.0, 1.0, 0.5]) )
+    iteration = (iteration+1)%200
 
 pyglet.clock.schedule_interval(mainLoop, 1/TARGET_FPS)
-pyglet.clock.schedule_interval(spawnParticle, 0.1)
+pyglet.clock.schedule_interval(spawnParticle, 0.25)
 pyglet.app.run()
