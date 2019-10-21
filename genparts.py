@@ -12,7 +12,7 @@ RADIUS = 25
 #-class-definitions---------------------------------------------------------------
 # position given as spherical coordinates
 class ParticleSystem:
-    def __init__(self, position, startColor, endColor, lifespan=2):
+    def __init__(self, position, startColor, endColor, lifespan=0.5):
         # define system properties
         self.spos = position
         self.pos = sphericalToXYZ(*position)
@@ -45,7 +45,7 @@ class ParticleSystem:
         self.alive = self.age < self.lifespan
 
     def spawn(self):
-        for count in range(100):
+        for count in range(10):
             pos = sphericalToXYZ(self.spos[0], self.spos[1]+random.uniform(-SPAWN_RAD,SPAWN_RAD), self.spos[2]+random.uniform(-SPAWN_RAD, SPAWN_RAD))
             mag = P_VEL + random.uniform(-P_VEL_VAR, P_VEL_VAR)
             vel = [mag*self.normal[0]+random.uniform(-P_VAR, P_VAR),

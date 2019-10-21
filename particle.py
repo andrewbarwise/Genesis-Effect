@@ -13,24 +13,7 @@ TWO_PI = math.pi * 2
 class ParticleSystem:
     def __init__(self, position, startColor, endColor, lifespan=3):
         # define system properties
-<<<<<<< HEAD
-        self.pos = [position[0], position[1], position[2]]
-        self.col = [color[0], color[1], color[2]]
-        self.children = []
-        self.canSpawn = False
-        self.alive = True
-        # self.spawnType = particles (vs. nested particle systems)?
-        # self.spawnCondition?
-        return None
-
-    def update(self):
-        # move?
-        # check life/spawning conditions
-        # spawn new particles etc.
-        return None
-=======
         self.pos = position
->>>>>>> 23bfa873a37eaae51ddb04e1a182933db5b11c7f
 
         self.col = startColor
         self.colS, self.colF = startColor, endColor

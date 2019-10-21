@@ -1,8 +1,10 @@
 import math, random
 
+import numpy as np
+
 import pyglet
 from pyglet.gl import *
-from genparts import *
+from genparts  import *
 
 #-drawing-constants---------------------------------------------------------------
 WIDTH, HEIGHT, WINDOW_FS = 800, 600, True
@@ -25,7 +27,7 @@ DELTA_T = 1/TARGET_FPS
 # more constants here
 
 #-sphere-drawing------------------------------------------------------------------
-pos = [0, 0, -60]
+pos = [0, 0, -40]
 rot_deg = 0
 rot_vx, rot_vy, rot_vz = 0.0, 1.0, 0.0
 
@@ -80,7 +82,7 @@ def mainLoop(dt):
 
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluPerspective(90, WIDTH/HEIGHT, 0.1, 50)
+    gluPerspective(90, WIDTH/HEIGHT, 0.1, 25)
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
@@ -99,7 +101,7 @@ def mainLoop(dt):
     for i in range(0, len(points), 3):
         glVertex3f(points[i], points[i+1], points[i+2])
     glEnd()
-    rot_deg += 0.2
+    rot_deg += 0
 
     # particles
     global systems, frameNum
@@ -116,7 +118,6 @@ def mainLoop(dt):
     # draw pixels -> may be able to remove one loop with reordering and optimisation
     glBegin(GL_POINTS)
     for pp in particles:
-        if not pp.alive: print("This is not good")
         glColor4f(pp.col[0], pp.col[1], pp.col[2], pp.col[3])
         glVertex3f(pp.pos[0], pp.pos[1], pp.pos[2])
         # print(pp.pos[0], pp.pos[1], pp.pos[2])
@@ -128,12 +129,19 @@ def mainLoop(dt):
     glFlush()
 
 #-run-simluation------------------------------------------------------------------
+iteration = 0
+
 def spawnParticle(t):
-    global r
+    global r, iteration
     # spherical coordinates
-    polar, azimuth = random.random()*math.pi*2, random.random()*math.pi*2
-    systems.append( ParticleSystem([r, polar, azimuth], [1.0, 0.5, 0.05, 0.95], [1.0, 0.0, 0.1, 0.5]) )
+    polar = (math.pi * (iteration/400) % math.pi) - math.pi/4
+    for ii in range(4):
+        azimuth = ii * (math.pi/4) - math.pi/2
+        systems.append( ParticleSystem([r, polar, azimuth], [1.0, 0.5, 0.05, 0.95], [1.0, 0.0, 0.1, 0.5]) )
+
+    # systems.append( ParticleSystem([r, -polar, azimuth], [1.0, 0.5, 0.05, 0.95], [1.0, 0.0, 0.1, 0.5]) )
+    iteration += 1
 
 pyglet.clock.schedule_interval(mainLoop, 1/TARGET_FPS)
-pyglet.clock.schedule_interval(spawnParticle, 0.5)
+pyglet.clock.schedule_interval(spawnParticle, 0.1)
 pyglet.app.run()
