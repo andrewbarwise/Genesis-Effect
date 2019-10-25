@@ -2,10 +2,10 @@ import random, math
 
 #-constants-----------------------------------------------------------------------
 GRAVITY = -100
-EXPL_VEL_M, EXPL_VEL_V = 50, 50
-EXPL_SHAPE = 0.8
+EXPL_VEL_M, EXPL_VEL_V = 40, 40
+EXPL_SHAPE = 0.75
 EXPL_SHAPE_V = 50
-EXPL_R_MIN, EXPL_R_MAX = 0.3, math.pi-0.3
+EXPL_R_MIN, EXPL_R_MAX = math.pi/4, 3*math.pi/4
 
 TWO_PI = math.pi * 2
 
@@ -41,7 +41,7 @@ class ParticleSystem:
         self.alive = self.age < self.lifespan
 
     def spawn(self):
-        for ii in range(200):
+        for ii in range(300):
             pow, rad = EXPL_VEL_M+random.uniform(-EXPL_VEL_V, EXPL_VEL_V), random.uniform(EXPL_R_MIN, EXPL_R_MAX)
             self.children.append( Particle(self.pos.copy(),[(pow*2*(1-EXPL_SHAPE))*math.cos(rad), (pow*2*EXPL_SHAPE)*math.sin(rad), 0], [0, GRAVITY, 0], self.col.copy(), self.colF) )
         self.canSpawn = False
