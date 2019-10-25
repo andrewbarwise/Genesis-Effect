@@ -26,6 +26,6 @@ Any number of possible attributes could be used within a particle system however
 
 4) Particle extinction: There are a few methods for determining the lifetime of a particle. One way is to have a limit on its lifetime measured by frames. Once a particles lifetime reaches zero it is terminated. Another way of ensuring particle extinction is to track the distance of a particle and killing it off if it moves beyond a specified distance from the origin of its parent particle system.
 
-5) Particle rendering:
+5) Particle rendering: In our model particles are rendered as point light sources. The particles are slightly transparent. Being slightly transparent allows the avoidance of the issues around clipping. Being slightly transparent allows the particle colours to mix together.
 
-6) Particle hierarchy:
+6) Particle hierarchy: A model is designed so that within a particle system the particles are themselves particle systems. When the parent particle system is transformed so are its descendent particle systems and their particles. The number of new particle systems generated at a frame is based on the parents particle generation rate. A tree data structure is used to represent hierarchy.
